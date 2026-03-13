@@ -51,6 +51,13 @@
             <version>${langchain4j.version}</version>
         </dependency>
 
+        <!-- 文档加载器：支持 PDF, Word, TXT 等多种格式 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-document-parser-apache-tika</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
         <!-- 日志：输出 LangChain4j debug 日志 -->
         <dependency>
             <groupId>org.slf4j</groupId>

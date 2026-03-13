@@ -1,6 +1,6 @@
 # Java Agent 学习进度追踪
 
-**最后更新**: 2026-03-13
+**最后更新**: 2026-03-14 (生产级 Memory 架构 - Redis 持久化)
 
 ---
 
@@ -8,10 +8,10 @@
 
 | 指标 | 数值 |
 |------|------|
-| 总进度 | ~8% |
-| 已学习天数 | 2 |
-| 主题掌握 | 3/6 领域有进展 |
-| 高优先级知识缺口 | 3 |
+| 总进度 | ~15% |
+| 已学习天数 | 3 |
+| 主题掌握 | 4/6 领域有进展 |
+| 高优先级知识缺口 | 1 |
 
 ---
 
@@ -21,7 +21,7 @@
 |------|------------|------|
 | A. Core Java & Concurrency | 0/6 | ⬜ 未开始 |
 | B. Agent Frameworks | 2/6 | 🟡 进行中 |
-| C. Memory & Context | 0/5 | ⬜ 未开始 |
+| C. Memory & Context | 4/5 | 🟢 已完成 |
 | D. RAG | 2/6 | 🟡 进行中 |
 | E. Tooling | 0/6 | ⬜ 未开始 |
 | F. Observability & Safety | 0/6 | ⬜ 未开始 |
@@ -63,6 +63,11 @@
   - `List<ThoughtAndActionInfo>` 存储完整推理链
   - 每轮记录：思考文本 + 工具调用参数 + 工具结果
   - 历史拼入 Prompt 供下轮 LLM 使用
+
+- **Redis 持久化短期记忆** (2026-03-14, 置信度：高)
+  - 生产环境多实例部署必须用 Redis 集中存储短期记忆
+  - Redis 数据结构：session:{id}:messages (List), TTL 30 分钟
+  - 解决单机内存重启丢失/多实例无法共享的问题
 
 ---
 
@@ -114,9 +119,11 @@
 ---
 
 ### 阶段三：Memory 深入（目标：构建有长期记忆的 Agent）
-- [ ] Day 13: TokenWindowChatMemory + 对话摘要策略
-- [ ] Day 14: 长期记忆设计（用户画像持久化、跨会话记忆）
-- [ ] Day 15: Embedding 记忆（语义检索历史对话）
+- [x] Day 13: TokenWindowChatMemory + 对话摘要策略
+- [x] Day 14: 长期记忆设计（用户画像持久化、跨会话记忆）
+- [x] Day 15: Embedding 记忆（语义检索历史对话）
+- [x] Day 15+: 生产级 Memory 架构（Redis 持久化短期记忆，多实例共享）
+- [x] Day 15++: 金融投顾场景生产方案（服务端生成 session_id、Kafka 异步日志、合规审计）
 
 ---
 
@@ -168,3 +175,5 @@
 | 2026-03-13 | LangChain4j 环境搭建 + day5 跑通 | 0.36.2，阿里云镜像，~30行代码完成 Agent |
 | 2026-03-13 | ChatMemory + Human-in-the-loop + Listener | ConfirmService 拦截，ChatModelListener 调试 |
 | 2026-03-13 | RAG 基础：索引+检索+切块策略 | InMemoryEmbeddingStore + QwenEmbedding，day7 跑通 |
+| 2026-03-14 | 生产级 Memory 架构 | Redis 持久化短期记忆，多实例共享 |
+| 2026-03-14 | 金融投顾场景生产方案 | 服务端生成 session_id、Kafka 异步日志、合规审计 |

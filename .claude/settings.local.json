@@ -5,7 +5,12 @@
       "WebFetch(domain:www.alibabacloud.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:help.aliyun.com)",
-      "Bash(mvn -version)"
+      "Bash(mvn -version)",
+      "Bash(java -version 2>&1)",
+      "Bash(git clone:*)",
+      "Bash(mkdir -p /Users/jiangwenting/study/javaagent-study/.claude/commands && cp /Users/jiangwenting/study/pua-plugin/skills/pua/SKILL.md /Users/jiangwenting/study/javaagent-study/.claude/commands/pua.md)",
+      "Bash(cat >> /Users/jiangwenting/study/javaagent-study/progress/java-agent-tracker.md << 'EOF'\n| 2026-03-14 | 生产级 Memory 架构 | Redis 持久化短期记忆，多实例共享 |\n| 2026-03-14 | 金融投顾场景生产方案 | 服务端生成 session_id、Kafka 异步日志、合规审计 |\nEOF)",
+      "Bash(cd /Users/jiangwenting/study/javaagent-study/demo && mvn -q exec:java -Dexec.mainClass=\"day9.RedisBackedChatMemory\" 2>&1 | head -50)"
     ]
   }
 }
