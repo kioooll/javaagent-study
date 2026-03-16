@@ -13,7 +13,10 @@
       "Bash(cd /Users/jiangwenting/study/javaagent-study/demo && mvn -q exec:java -Dexec.mainClass=\"day9.RedisBackedChatMemory\" 2>&1 | head -50)",
       "Bash(claude --version)",
       "Bash(npm view:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(cd:*)",
+      "Bash(export:*)",
+      "WebFetch(domain:mvnrepository.com)"
     ]
   }
 }

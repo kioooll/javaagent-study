@@ -19,14 +19,18 @@ import java.util.List;
 public class TokenWindowExample {
 
     public static void main(String[] args) {
-        // 使用 LangChain4j 自带的近似 Token 计数器
-        TokenWindowChatMemory memory1 = TokenWindowChatMemory.withMaxTokens(1000);
+        // 使用具体模型的 Tokenizer（更精确）
+        // QwenTokenizer 需要 apiKey 和 modelName 参数
+        String apiKey = System.getenv("DASHSCOPE_API_KEY");
+        QwenTokenizer tokenizer = new QwenTokenizer(apiKey, "qwen-plus");
+        // maxTokens 方法需要同时传入 token 数和 tokenizer
+        TokenWindowChatMemory memory1 = TokenWindowChatMemory.builder()
+                .maxTokens(1000, tokenizer)
+                .build();
 
-        // 或者使用具体模型的 Tokenizer（更精确）
-        QwenTokenizer tokenizer = new QwenTokenizer();
+        // 或者使用另一个 memory 实例
         TokenWindowChatMemory memory2 = TokenWindowChatMemory.builder()
-                .maxTokens(1000)
-                .tokenizer(tokenizer)
+                .maxTokens(2000, tokenizer)
                 .build();
 
         // 添加消息
@@ -41,7 +45,7 @@ public class TokenWindowExample {
         for (ChatMessage msg : memory1.messages()) {
             int tokenCount = tokenizer.estimateTokenCountInText(msg.toString());
             System.out.printf("[%s] %d tokens: %s...%n",
-                    msg.type().getSimpleName(),
+                    msg.type().name(),
                     tokenCount,
                     msg.toString().substring(0, Math.min(50, msg.toString().length())));
         }

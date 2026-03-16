@@ -46,7 +46,9 @@ public class RedisBackedChatMemory implements ChatMemory {
         // 生产环境 Key 命名：wencairobot:user_dialog:{user_id}:{session_id}:
         this.redisKeyPrefix = "wencairobot:user_dialog:" + userId + ":" + sessionId + ":";
         this.redis = new RedisMock();
-        this.tokenizer = new QwenTokenizer();
+        // QwenTokenizer 需要 apiKey 和 modelName 参数
+        String apiKey = System.getenv("DASHSCOPE_API_KEY");
+        this.tokenizer = new QwenTokenizer(apiKey, "qwen-plus");
     }
 
     /**
@@ -54,6 +56,11 @@ public class RedisBackedChatMemory implements ChatMemory {
      */
     public RedisBackedChatMemory(String sessionId, int maxTokens) {
         this("default_user", sessionId, maxTokens);
+    }
+
+    @Override
+    public Object id() {
+        return sessionId;
     }
 
     @Override

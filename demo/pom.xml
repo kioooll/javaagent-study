@@ -58,6 +58,13 @@
             <version>${langchain4j.version}</version>
         </dependency>
 
+        <!-- PGVector 向量数据库集成 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-pgvector</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
         <!-- 日志：输出 LangChain4j debug 日志 -->
         <dependency>
             <groupId>org.slf4j</groupId>
