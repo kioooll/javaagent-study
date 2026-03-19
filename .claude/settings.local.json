@@ -16,7 +16,10 @@
       "Bash(npm install:*)",
       "Bash(cd:*)",
       "Bash(export:*)",
-      "WebFetch(domain:mvnrepository.com)"
+      "WebFetch(domain:mvnrepository.com)",
+      "Bash(mvn compile:*)",
+      "Bash(/usr/libexec/java_home -V 2>&1)",
+      "Bash(source:*)"
     ]
   }
 }
