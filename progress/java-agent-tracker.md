@@ -1,6 +1,6 @@
 # Java Agent 学习进度追踪
 
-**最后更新**: 2026-03-18 (Multi-Agent 系统 - Orchestrator+SubAgent 架构)
+**最后更新**: 2026-03-19 (Plan-and-Solve Multi-Agent - DAG 并行执行)
 
 ---
 
@@ -161,12 +161,12 @@
 
 ---
 
-### 阶段四：Multi-Agent（下一步）
-- [ ] Day 16: 多 Agent 概念（Orchestrator + SubAgent 模式）
-- [ ] Day 17: 手写 Orchestrator，任务分发给专业 SubAgent
-- [ ] Day 18: Agent 间通信 + 结果聚合
-- [ ] Day 19: Plan-and-Solve 模式（先规划再执行）
-- [ ] Day 20: 并发多 Agent（CompletableFuture 并行调用）
+### 阶段四：Multi-Agent（进行中）
+- [x] Day 16: 多 Agent 概念（Orchestrator + SubAgent 模式）
+- [x] Day 17: Plan-and-Solve + CompletableFuture 并行执行
+- [x] Day 18: Agent 间通信（SubAgent 直接协作，调用链追踪防死循环）
+- [ ] Day 19: 复杂 DAG 编排 + 错误传播处理
+- [ ] Day 20: 并发多 Agent 性能调优
 
 ---
 
@@ -212,3 +212,5 @@
 | 2026-03-14 | 生产级 Memory 架构 | Redis 持久化短期记忆，多实例共享 |
 | 2026-03-14 | 金融投顾场景生产方案 | 服务端生成 session_id、Kafka 异步日志、合规审计 |
 | 2026-03-16 | RAG 生产级技能完整掌握 | 文档加载/切块/PGVector/混合检索/RRF/评估 |
+| 2026-03-19 | Plan-and-Solve Multi-Agent | DAG 执行计划/CompletableFuture 并行/上游结果传递/过度规划防御 |
+| 2026-03-20 | Agent 间通信 + 调用链防死循环 | callChain/depth 字段设计/forward()语义/safeHandle()拦截/环检测+深度检测 |
