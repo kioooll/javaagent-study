@@ -1,6 +1,6 @@
 # Java Agent 学习进度追踪
 
-**最后更新**: 2026-03-19 (Plan-and-Solve Multi-Agent - DAG 并行执行)
+**最后更新**: 2026-03-20 (DAG 错误传播处理 - exceptionally() 优雅降级)
 
 ---
 
@@ -20,7 +20,7 @@
 | 领域 | 已学/主题数 | 状态 |
 |------|------------|------|
 | A. Core Java & Concurrency | 0/6 | ⬜ 未开始 |
-| B. Agent Frameworks | 4/6 | 🟢 已完成 |
+| B. Agent Frameworks | 5/6 | 🟢 进行中 |
 | C. Memory & Context | 4/5 | 🟢 已完成 |
 | D. RAG | 6/6 | 🟢 已完成 |
 | E. Tooling | 0/6 | ⬜ 未开始 |
@@ -47,6 +47,13 @@
   - `List<Message>` 维护会话历史，`Role.TOOL` 回传工具结果
   - 超轮数边界：`doSummary()` 不传 tools 让模型根据历史做总结
   - Role 不只是格式，是模型理解对话状态的信号
+
+- **DAG 错误传播处理** (2026-03-20, 置信度: 中高)
+  - `exceptionally()` 捕获 SubAgent 异常，返回 TASK_ERROR fallback
+  - CompletionException 包装层：真正原因在 `e.getCause()`
+  - 错误内容透传给下游 Agent，模型写出"诚实报告"
+  - `aggregateResults()` 汇总失败任务，叶子全败时让模型生成用户友好解释
+  - 错误策略选型：fail-fast / 部分成功 / 降级 三者权衡
 
 - **LangChain4j 核心抽象** (2026-03-13, 置信度: 高)
   - `AiServices`：标准化 Agent 工作流，映射到手写的 callLlm/registerTool/List<Message>
@@ -165,7 +172,7 @@
 - [x] Day 16: 多 Agent 概念（Orchestrator + SubAgent 模式）
 - [x] Day 17: Plan-and-Solve + CompletableFuture 并行执行
 - [x] Day 18: Agent 间通信（SubAgent 直接协作，调用链追踪防死循环）
-- [ ] Day 19: 复杂 DAG 编排 + 错误传播处理
+- [x] Day 19: 复杂 DAG 编排 + 错误传播处理
 - [ ] Day 20: 并发多 Agent 性能调优
 
 ---
@@ -214,3 +221,4 @@
 | 2026-03-16 | RAG 生产级技能完整掌握 | 文档加载/切块/PGVector/混合检索/RRF/评估 |
 | 2026-03-19 | Plan-and-Solve Multi-Agent | DAG 执行计划/CompletableFuture 并行/上游结果传递/过度规划防御 |
 | 2026-03-20 | Agent 间通信 + 调用链防死循环 | callChain/depth 字段设计/forward()语义/safeHandle()拦截/环检测+深度检测 |
+| 2026-03-20 | DAG 错误传播处理 | exceptionally() 降级/CompletionException包装层/错误透传下游/聚合时错误摘要 |

@@ -104,43 +104,7 @@ public class RagAgent implements Agent {
 
     @Override
     public AgentMessage handle(AgentMessage message) {
-        log("收到查询请求：" + message.getContent());
-
-        // Step 1: 检索相关文档
-        List<Content> relevant = retriever.retrieve(Query.from(message.getContent()));
-
-        if (relevant.isEmpty()) {
-            return message.reply(AgentMessage.MessageType.TASK_RESULT,
-                    "抱歉，在知识库中没有找到相关信息。");
-        }
-
-        log("检索到 " + relevant.size() + " 条相关文档");
-
-        // Step 2: 基于检索结果生成回答
-        String context = relevant.stream()
-                .map(content -> content.textSegment().text())
-                .collect(Collectors.joining("\n\n"));
-
-        String prompt = """
-你是一个公司助手。请根据以下文档内容回答用户问题。
-如果文档中没有相关信息，请直接说"知识库中没有相关信息"，不要编造。
-
-相关文档：
-%s
-
-用户问题：%s
-
-请基于文档内容回答：
-""".formatted(context, message.getContent());
-
-        String answer = chatModel.generate(prompt);
-        log("生成回答：" + answer.substring(0, Math.min(50, answer.length())) + "...");
-
-        // 将检索到的文档放入元数据，供后续参考
-        AgentMessage response = message.reply(AgentMessage.MessageType.TASK_RESULT, answer);
-        response.setMeta("sourceDocuments", relevant.stream().map(c -> c.textSegment().text()).toList());
-
-        return response;
+        throw new RuntimeException();
     }
 
     private void log(String message) {
