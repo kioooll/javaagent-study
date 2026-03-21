@@ -65,5 +65,83 @@ CompletableFuture.supplyAsync(() -> plan(userRequest), executor)
 ### Virtual Threads 关联
 JDK 21 Virtual Threads 让 .join() 阻塞成本接近零，IO 密集型场景可以不用彻底异步化——这是跳过Day21的代价
 
+## Day 23：Streaming 响应（SSE）
+
+### 概念掌握
+- 学生已了解流式输出（ChatGPT 打字效果）
+- 理解 SSE 是 LLM → Java后端 → 前端的传输机制
+- 前端需要按 event type 区分不同阶段（planning/agent_status/content）
+
+### 关键知识点
+
+**回调→Future 桥接（Promise化）**
+```java
+CompletableFuture<String> future = new CompletableFuture<>();
+streamingModel.generate(prompt, new StreamingResponseHandler<>() {
+    public void onNext(String token) { tokenConsumer.accept(token); }
+    public void onComplete(Response r) { future.complete(fullText); }
+    public void onError(Throwable e) { future.completeExceptionally(e); }
+});
+return future;
+```
+
+**new CompletableFuture<>() vs supplyAsync()**
+- supplyAsync：框架跑任务、自动完成
+- new CompletableFuture<>()：手动遥控器，完成时机在回调里
+
+**tokenConsumer 设计**
+- `Consumer<String>` 解耦推送方式
+- 可换成 SSE emitter、WebSocket、System.out::print
+
+**handle() 内部 .join()**
+- Orchestrator 视角同步，用户视角流式
+- 两种风格共存
+
+### 运行结果
+- 场景1：token 实时打印，流式效果可见 ✅
+- 场景2：handle() 集成 Agent 架构，完整内容通过 reply() 返回 ✅
+
+### 遗留问题（Day24 涉及）
+- 用户断开连接时 generateAsync() 仍在跑，需要取消机制
+
+## Day 24：Resilience4j 重试 + 熔断
+
+### 概念掌握
+
+| 问题 | 学生回答 | 评价 |
+|------|----------|------|
+| 429 时立刻还是等一会重试 | 等一会（指数退避）✅ | 正确 |
+| 彻底宕机时一直重试的问题 | 加重服务端压力，应熔断+HALF-OPEN探测 ✅ | 完全正确 |
+| Retry/CB 应加在哪层 | callLlm()（DRY原则，通用逻辑）✅ | 正确 |
+| 装饰顺序反转会如何 | 漏计重试次数 ✅（+CB无法在中途踩刹车）| 方向对，补充了更重要的点 |
+| isRetryable 字符串匹配的问题 | 应按接口文档用 status_code 判断 ✅ | 完全正确 |
+
+### 关键知识点
+
+**熔断器三态**
+- CLOSED → OPEN：slidingWindow内失败率超阈值
+- OPEN → HALF-OPEN：等待 waitDurationInOpenState 后自动切换
+- HALF-OPEN → CLOSED：探测请求成功
+- HALF-OPEN → OPEN：探测请求失败
+
+**Registry 全局单例**
+- `CircuitBreakerRegistry.circuitBreaker("同名")` 返回同一实例
+- 避免每次 new 导致熔断器状态无法积累
+
+**装饰顺序：Retry(外) → CB(内)**
+- CB在内层：每次重试都被CB计数，CB可在中途OPEN阻断后续重试
+- CB在外层：CB只看到1次逻辑调用结果，无法在重试中途介入
+
+**isRetryable 精确化**
+- 用 `ApiException.getStatus().getStatusCode()` 而非字符串匹配
+- -1(SDK网络错误) / 429(限流) / 500/503(服务端) → 可重试
+- 401/400 → 不可重试
+
+### 运行结果（CircuitBreakerDemo）
+- 阶段1：请求3触发OPEN，请求4-8被拦截（5次无意义调用被阻断）
+- 阶段2：等待3s → HALF-OPEN
+- 阶段3：2次探测成功 → CLOSED
+- 总实际调用：9次（vs 11次逻辑请求，省了5次）
+
 ## 下一步
-- Day 23：Streaming 响应（SSE）
+- Day 25：Context 大对象的内存管理 + 序列化

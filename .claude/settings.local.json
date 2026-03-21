@@ -19,7 +19,11 @@
       "Bash(source:*)",
       "Bash(cp:*)",
       "WebFetch(domain:docs.langchain4j.dev)",
-      "WebFetch(domain:javadoc.io)"
+      "WebFetch(domain:javadoc.io)",
+      "Read(//private/tmp/**)",
+      "Bash(jar xf:*)",
+      "Bash(jar tf:*)",
+      "Bash(javap:*)"
     ]
   }
 }

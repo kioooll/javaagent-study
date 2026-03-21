@@ -1,6 +1,6 @@
 # Java Agent 学习进度追踪
 
-**最后更新**: 2026-03-21 (CompletableFuture 链式调用进阶 - handleAsync/thenCompose)
+**最后更新**: 2026-03-21 (Prompt Injection 防御)
 
 ---
 
@@ -47,6 +47,26 @@
   - `List<Message>` 维护会话历史，`Role.TOOL` 回传工具结果
   - 超轮数边界：`doSummary()` 不传 tools 让模型根据历史做总结
   - Role 不只是格式，是模型理解对话状态的信号
+
+- **Prompt Injection 防御** (2026-03-21, 置信度: 高)
+  - Direct vs Indirect Injection 区别（间接更难防，来源是外部数据）
+  - 纵深防御三层：入口过滤 + 数据库最小权限 + 输出验证
+  - PromptGuard 两层：关键词黑名单（快）+ LLM 语义检测（准）
+  - fail-open vs fail-close：按业务安全级别选择
+  - 数据库账号最小权限是最可靠的防线，代码层检查可被绕过
+
+- **Resilience4j 重试 + 熔断** (2026-03-21, 置信度: 高)
+  - RetryConfig：maxAttempts=3，指数退避，retryOnException 精确匹配可重试异常
+  - CircuitBreaker 三态：CLOSED → OPEN → HALF-OPEN → CLOSED
+  - Registry 保证全局单例，装饰顺序：Retry(外) → CB(内)，CB可在重试中途踩刹车
+  - 基于 ApiException.getStatus().getStatusCode() 精确判断（不用字符串匹配）
+  - 可重试：-1(网络)/429(限流)/500/503；不可重试：401/400
+
+- **Streaming 响应** (2026-03-21, 置信度: 高)
+  - QwenStreamingChatModel + StreamingResponseHandler
+  - new CompletableFuture<>() 桥接回调→Future（Promise化）
+  - tokenConsumer 解耦推送方式（SSE/WebSocket/控制台）
+  - handle() 内部 .join()：Orchestrator同步，用户流式
 
 - **ThreadPoolExecutor 调优** (2026-03-21, 置信度: 高)
   - IO 密集型 core=max，不依赖队列满才扩张
@@ -192,15 +212,15 @@
 ### 阶段五：Core Java 并发（目标：写出高性能 Agent）
 - [ ] Day 21: Virtual Threads（Project Loom）+ LLM 调用并发模型
 - [ ] Day 22: 异步 Agent（CompletableFuture 链式调用）
-- [ ] Day 23: Streaming 响应（SSE + Reactive Streams）
-- [ ] Day 24: Resilience4j 重试 + 熔断（LLM 调用容错）
+- [x] Day 23: Streaming 响应（SSE + Reactive Streams）
+- [x] Day 24: Resilience4j 重试 + 熔断（LLM 调用容错）
 - [ ] Day 25: Context 大对象的内存管理 + 序列化
 
 ---
 
 ### 阶段六：Observability & 生产安全（目标：能上生产）
 - [ ] Day 26: OpenTelemetry Tracing（追踪每一步 Agent 推理）
-- [ ] Day 27: Prompt Injection 防御策略
+- [x] Day 27: Prompt Injection 防御策略
 - [ ] Day 28: 输出验证 + Guardrails（结构化输出校验）
 - [ ] Day 29: 非确定性输出的单元测试策略
 - [ ] Day 30: Token 成本监控 + 限流
@@ -236,3 +256,6 @@
 | 2026-03-20 | DAG 错误传播处理 | exceptionally() 降级/CompletionException包装层/错误透传下游/聚合时错误摘要 |
 | 2026-03-21 | ThreadPoolExecutor 调优 | core=max/有界队列/自定义拒绝策略/Little's Law |
 | 2026-03-21 | CompletableFuture 链式调用进阶 | thenCompose/假异步陷阱/record打包上下文/solveAsync |
+| 2026-03-21 | Streaming 响应 | QwenStreamingChatModel/Promise化/tokenConsumer/SSE |
+| 2026-03-21 | Resilience4j 重试+熔断 | RetryConfig指数退避/CB三态/Registry单例/ApiException statusCode精确判断 |
+| 2026-03-21 | Prompt Injection 防御 | Direct/Indirect注入/纵深防御/PromptGuard双层/数据库最小权限 |
