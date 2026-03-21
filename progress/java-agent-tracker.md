@@ -1,6 +1,6 @@
 # Java Agent 学习进度追踪
 
-**最后更新**: 2026-03-20 (DAG 错误传播处理 - exceptionally() 优雅降级)
+**最后更新**: 2026-03-21 (CompletableFuture 链式调用进阶 - handleAsync/thenCompose)
 
 ---
 
@@ -47,6 +47,17 @@
   - `List<Message>` 维护会话历史，`Role.TOOL` 回传工具结果
   - 超轮数边界：`doSummary()` 不传 tools 让模型根据历史做总结
   - Role 不只是格式，是模型理解对话状态的信号
+
+- **ThreadPoolExecutor 调优** (2026-03-21, 置信度: 高)
+  - IO 密集型 core=max，不依赖队列满才扩张
+  - 有界队列 + 自定义拒绝策略（日志记录）
+  - Little's Law 估算线程数：QPS × 耗时 + 余量
+
+- **CompletableFuture 链式调用** (2026-03-21, 置信度: 高)
+  - thenCompose vs thenApply：前者用于每步也是异步的场景
+  - completedFuture(同步调用) 是假异步
+  - 上下文传递：嵌套lambda(短链) vs record打包(长链)
+  - solveAsync() 彻底异步化：thenApply 替换 allOf().join()
 
 - **DAG 错误传播处理** (2026-03-20, 置信度: 中高)
   - `exceptionally()` 捕获 SubAgent 异常，返回 TASK_ERROR fallback
@@ -173,7 +184,8 @@
 - [x] Day 17: Plan-and-Solve + CompletableFuture 并行执行
 - [x] Day 18: Agent 间通信（SubAgent 直接协作，调用链追踪防死循环）
 - [x] Day 19: 复杂 DAG 编排 + 错误传播处理
-- [ ] Day 20: 并发多 Agent 性能调优
+- [x] Day 20: 并发多 Agent 性能调优
+- [x] Day 22: 异步 Agent（CompletableFuture 链式调用）
 
 ---
 
@@ -222,3 +234,5 @@
 | 2026-03-19 | Plan-and-Solve Multi-Agent | DAG 执行计划/CompletableFuture 并行/上游结果传递/过度规划防御 |
 | 2026-03-20 | Agent 间通信 + 调用链防死循环 | callChain/depth 字段设计/forward()语义/safeHandle()拦截/环检测+深度检测 |
 | 2026-03-20 | DAG 错误传播处理 | exceptionally() 降级/CompletionException包装层/错误透传下游/聚合时错误摘要 |
+| 2026-03-21 | ThreadPoolExecutor 调优 | core=max/有界队列/自定义拒绝策略/Little's Law |
+| 2026-03-21 | CompletableFuture 链式调用进阶 | thenCompose/假异步陷阱/record打包上下文/solveAsync |

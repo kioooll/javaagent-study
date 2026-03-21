@@ -17,7 +17,9 @@
       "Bash(mvn compile:*)",
       "Bash(/usr/libexec/java_home -V 2>&1)",
       "Bash(source:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "WebFetch(domain:docs.langchain4j.dev)",
+      "WebFetch(domain:javadoc.io)"
     ]
   }
 }
