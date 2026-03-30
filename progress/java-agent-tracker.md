@@ -1,6 +1,6 @@
 # Java Agent 学习进度追踪
 
-**最后更新**: 2026-03-21 (Prompt Injection 防御)
+**最后更新**: 2026-03-27 (Context 大对象的内存管理 + 序列化，进行中)
 
 ---
 
@@ -8,8 +8,8 @@
 
 | 指标 | 数值 |
 |------|------|
-| 总进度 | ~30% |
-| 已学习天数 | 5 |
+| 总进度 | ~32% |
+| 已学习天数 | 6 |
 | 主题掌握 | 5/6 领域有进展 |
 | 高优先级知识缺口 | 0 |
 
@@ -259,3 +259,4 @@
 | 2026-03-21 | Streaming 响应 | QwenStreamingChatModel/Promise化/tokenConsumer/SSE |
 | 2026-03-21 | Resilience4j 重试+熔断 | RetryConfig指数退避/CB三态/Registry单例/ApiException statusCode精确判断 |
 | 2026-03-21 | Prompt Injection 防御 | Direct/Indirect注入/纵深防御/PromptGuard双层/数据库最小权限 |
+| 2026-03-27 | Day 25：Context 大对象的内存管理 + 序列化（进行中） | 对象可达性、JVM最小工作集、MySQL完整历史/Redis热上下文、默认采用“最近N轮+摘要” |
