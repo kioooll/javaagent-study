@@ -102,8 +102,26 @@
 ---
 
 ## 下一步
-- 继续讲解（下一轮）：
-  - “前后矛盾”检测流水线（事实槽 + 对账）
+- Day28/29 代码已完成并跑通
+
+## 代码产出
+
+### Day 28（Plan Guardrail）
+- `day28/TaskNode.java` — record 节点
+- `day28/PlanValidator.java` — 三层校验：自依赖修复 / 引用不存在抛异常 / agent 白名单
+- `day28/PlanAndSolveOrchestrator.java` — 含重试逻辑
+- `day28/Day28Main.java` — 单元验证 + 集成测试
+
+### Day 29（OpenTelemetry 追踪）
+- `day29/TracingConfig.java` — OTel SDK 初始化（LoggingSpanExporter）
+- `day29/PlanAndSolveOrchestrator.java` — Context.taskWrapping executor / 根 span / child span / degraded 标记
+- `day29/Day29Main.java` — 跑通，观察 traceId 一致性 + 降级 span 标记
+
+## 已验证行为
+- 所有子 span traceId 与根 span 相同（context 传播正常）
+- UnreliableDataAgent span → ERROR
+- 根 span → OK + degraded=true（降级成功）
+“前后矛盾”检测流水线（事实槽 + 对账）
   - Redis-first 写路径补偿（异步落库 + 回放 + 幂等）
   - 重摘要触发器组合：每N轮 + 状态切换 + 用户纠正
   - 是否需要引入 token 预算阈值（工程成本权衡）
